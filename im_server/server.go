@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"strings"
 	"sync"
 )
 
@@ -40,8 +41,27 @@ func (t *Server) ListenMessage() {
 }
 
 func (t *Server) Broadcast(user *User, msg string) {
-	sendMsg := "[" + user.Addr + "]" + user.Name + ":" + msg
-	t.Message <- sendMsg
+	if msg == "who" {
+		t.mapLock.Lock()
+		for _, usr := range t.OnlineUser {
+			sendMsg := "[" + usr.Addr + "]" + usr.Name + ":" + "在线ing..."
+			user.C <- sendMsg
+		}
+		t.mapLock.Unlock()
+	} else if len(msg) > 7 && msg[:7] == "rename|" {
+		newName := msg[7:]
+		user.ChangName(newName)
+	} else if msg[:3] == "to|" {
+		name := strings.Split(msg, "|")[1]
+		cnt := strings.Split(msg, "|")[2]
+		usr, ok := t.OnlineUser[name]
+		if ok {
+			usr.C <- user.Name + "对您说：" + cnt
+		}
+	} else {
+		sendMsg := "[" + user.Addr + "]" + user.Name + ":" + msg
+		t.Message <- sendMsg
+	}
 }
 
 func (t *Server) Handler(conn net.Conn) {
@@ -67,6 +87,7 @@ func (t *Server) Handler(conn net.Conn) {
 			msg := string(buf[:n-1])
 
 			t.Broadcast(user, msg)
+
 		}
 	}()
 
