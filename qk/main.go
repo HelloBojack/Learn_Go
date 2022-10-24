@@ -11,15 +11,19 @@ func main() {
 	r.Get("/", func(c *gk.Context) {
 		c.HTML(http.StatusOK, "<h1>Hello gk</h1>")
 	})
+
 	r.Get("/hello", func(c *gk.Context) {
+		// expect /hello?name=gkktutu
 		c.String(http.StatusOK, "hello %s, you're at %s\n", c.Query("name"), c.Path)
 	})
 
-	r.Post("/login", func(c *gk.Context) {
-		c.JSON(http.StatusOK, gk.J{
-			"username": c.PostForm("username"),
-			"password": c.PostForm("password"),
-		})
+	r.Get("/hello/:name", func(c *gk.Context) {
+		// expect /hello/gkktutu
+		c.String(http.StatusOK, "hello %s, you're at %s\n", c.Path)
+	})
+
+	r.Get("/assets/*filepath", func(c *gk.Context) {
+		c.JSON(http.StatusOK, gk.J{"filepath": "123"})
 	})
 
 	r.Run(":9999")
