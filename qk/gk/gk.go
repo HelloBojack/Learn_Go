@@ -5,11 +5,14 @@ import (
 )
 
 type Engine struct {
+	*RouterGroup
 	router *router
 }
 
 func New() *Engine {
-	return &Engine{router: newRouter()}
+	engine := &Engine{router: newRouter()}
+	engine.RouterGroup = &RouterGroup{engine: engine}
+	return engine
 }
 
 func (e *Engine) Run(addr string) {
