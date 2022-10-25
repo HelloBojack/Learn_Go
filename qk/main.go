@@ -29,7 +29,7 @@ func onlyForV2() gk.HandlerFunc {
 }
 
 func main() {
-	r := gk.New()
+	r := gk.Default()
 
 	r.Use(Logger())
 	r.Get("/", func(c *gk.Context) {
@@ -71,6 +71,11 @@ func main() {
 			c.String(http.StatusOK, "hello %s, you're at %s\n", c.Param("name"), c.Path)
 		})
 	}
+
+	r.Get("/panic", func(c *gk.Context) {
+		names := []string{"geektutu"}
+		c.String(http.StatusOK, names[100])
+	})
 
 	r.Run(":9999")
 }

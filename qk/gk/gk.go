@@ -18,6 +18,12 @@ func New() *Engine {
 	return engine
 }
 
+func Default() *Engine {
+	engine := New()
+	engine.Use(Recovery())
+	return engine
+}
+
 func (e *Engine) Run(addr string) {
 	http.ListenAndServe(addr, e)
 }
