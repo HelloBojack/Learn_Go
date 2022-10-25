@@ -1,9 +1,9 @@
 package gk
 
 type RouterGroup struct {
-	prefix string
-	// middlewares []HandlerFunc
-	parent *RouterGroup
+	prefix      string
+	middlewares []HandlerFunc
+	parent      *RouterGroup
 
 	engine *Engine
 }
@@ -14,7 +14,12 @@ func (g *RouterGroup) Group(prefix string) *RouterGroup {
 		parent: g,
 		engine: g.engine,
 	}
+	g.engine.groups = append(g.engine.groups, newGroup)
 	return newGroup
+}
+
+func (g *RouterGroup) Use(middleware ...HandlerFunc) {
+	g.middlewares = append(g.middlewares, middleware...)
 }
 
 func (g *RouterGroup) Get(path string, handler HandlerFunc) {
