@@ -19,11 +19,11 @@ func main() {
 
 	r.Get("/hello/:name", func(c *gk.Context) {
 		// expect /hello/gkktutu
-		c.String(http.StatusOK, "hello %s, you're at %s\n", c.Path)
+		c.String(http.StatusOK, "hello %s, you're at %s\n", c.Param("name"), c.Path)
 	})
 
 	r.Get("/assets/*filepath", func(c *gk.Context) {
-		c.JSON(http.StatusOK, gk.J{"filepath": "123"})
+		c.JSON(http.StatusOK, gk.J{"filepath": c.Param("filepath")})
 	})
 
 	r.Run(":9999")

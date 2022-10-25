@@ -9,17 +9,6 @@ type node struct {
 	isWild   bool
 }
 
-func parsePath(path string) []string {
-	temp_parts := strings.Split(path, "/")
-	parts := make([]string, 0)
-	for _, item := range temp_parts {
-		if item != "" {
-			parts = append(parts, item)
-		}
-	}
-	return parts
-}
-
 func (n *node) matchChild(part string) *node {
 	for _, child := range n.children {
 		if child.part == part || child.isWild {
